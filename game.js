@@ -5,8 +5,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'player');
 
-        let image = scene.add.image(x, y, 'player');
-
+        scene.add.existing(this);
+        scene.physics.world.enableBody(this);
         
     }
 }
@@ -15,8 +15,13 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'enemy');
 
-        let image = scene.add.image(x, y, 'enemy');
+        scene.add.existing(this);
+        scene.physics.world.enableBody(this);
+
+        
+        this.body.velocity.x = 50;
     }
+    
 }
 
 //
@@ -31,6 +36,7 @@ class level1 extends Phaser.Scene {
         this.load.image('player', './assets/player.png');
         this.load.image('enemy', './assets/enemy.png');
         this.load.image('ball', './assets/ball.png');
+        this.load.image('goal', './assets/goal.png');
     }
     create() {
         //keyboard input
@@ -38,16 +44,22 @@ class level1 extends Phaser.Scene {
 
         //assets
         let background = this.add.image(0,0, 'background').setOrigin(0);
+        let owngoal = this.add.image(55,270, 'goal');
+        let enemygoal = this.add.image(665,270, 'goal');
     
-        this.noob = this.physics.add.sprite(100, 100, 'player')
-        //this.noob.setCircle(25);
+
+        //player
+        this.noob = new Player(this, 100, 100);
+        //this.noob = this.physics.add.sprite(100, 100, 'player')
         this.noob.setCollideWorldBounds(true);
+
+        let enemy = new Enemy(this, 300,300);
 
         //ball
         this.ball = this.physics.add.sprite(360, 270, 'ball')
         this.ball.setCollideWorldBounds(true);
         this.ball.setBounce(.5);
-        this.ball.setCircle(25);
+        this.ball.setCircle(15,10,10);
         this.ball.setMass(.5);
         this.ball.body.allowRotation = true; 
 
@@ -63,18 +75,12 @@ class level1 extends Phaser.Scene {
             ball.setVelocityX(1000*Math.random());
             }
 
-            if (ball.y < noob.y) {
-            ball.setVelocityY(-1000*Math.random());
-            }
-            else {
-            ball.setVelocityY(1000*Math.random());
-            }
-
         });
 
     }
     update() {
         //x movement
+        
         if(this.cursors.left.isDown) { 
 
             this.noob.angle = 180;
@@ -113,7 +119,6 @@ class level1 extends Phaser.Scene {
         else{
             this.noob.setVelocityY(0);
         }
-        
     }
 }
 
