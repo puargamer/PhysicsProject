@@ -125,6 +125,7 @@ class Goal extends Phaser.Physics.Arcade.Sprite {
 
         this.body.onCollide = true;
         this.setSize(16,128);
+        this.setPushable(false);
 
         this.leftpost = scene.physics.add.sprite(x,y-70)
         this.leftpost.setSize(76,12)
@@ -135,6 +136,11 @@ class Goal extends Phaser.Physics.Arcade.Sprite {
         this.rightpost.setSize(76,12)
         this.rightpost.body.onCollide = true
         this.rightpost.setPushable(false);
+
+        this.scene.physics.add.collider(this.scene.ball, this, (ball, goal) =>
+        {
+            this.scene.scene.start(`${nextscene}`);
+        });
         
     }
     update() {
@@ -180,8 +186,8 @@ class level1 extends Phaser.Scene {
         this.ball = new Ball(this, 360, 270);
 
         //goals
-        this.owngoal = new Goal(this, 40,270);
-        this.enemygoal = new Goal(this, 680,270);
+        this.owngoal = new Goal(this, 40,270, 'level1');
+        this.enemygoal = new Goal(this, 680,270, 'level1');
 
         //collision event
         //(sets random ball velocities on collison)
