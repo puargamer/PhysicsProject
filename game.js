@@ -96,6 +96,11 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
                 enemy.setVelocityY(2000*Math.random());
                 }
             }
+
+            //points system
+            this.scene.cards ++;
+            console.log('contact');
+            console.log(this.cards);
         });
 
     }
@@ -104,6 +109,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         //collide with ball and player
         this.scene.physics.collide(this, this.scene.ball);
         this.scene.physics.collide(this, this.scene.noob);
+
 
 
         //y axis movement
@@ -213,12 +219,13 @@ class level1 extends Phaser.Scene {
         this.load.image('goal', './assets/goal.png');
     }
     create() {
+
         this.cameras.main.fadeIn(1000);
         //assets
         let background = this.add.image(0,0, 'background').setOrigin(0);
         let owngoal = this.add.image(55,270, 'goal');
         let enemygoal = this.add.image(665,270, 'goal');
-    
+
 
         //player
         this.noob = new Player(this, 100, 100);
@@ -233,14 +240,18 @@ class level1 extends Phaser.Scene {
         this.owngoal = new Goal(this, 40,270, 'lose');
         this.enemygoal = new Goal(this, 680,270, 'level2');
 
+        //score system
+        this.cards = 0;
+        this.scoreLabel = this.add.text(game.config.width/2, game.config.height/10, `Yellow Cards: ${this.cards}`, {font: "40px Arial", color: "#FFF929"}).setOrigin(0.5);
+
     
     }
     update() {
-
         this.noob.update();
         this.enemy.update();
         this.owngoal.update();
         this.enemygoal.update();
+        this.scoreLabel.text = "Yellow Cards:" + this.cards;
     }
 }
 
@@ -261,7 +272,7 @@ class level2 extends Phaser.Scene {
         let background = this.add.image(0,0, 'background').setOrigin(0);
         let owngoal = this.add.image(55,270, 'goal');
         let enemygoal = this.add.image(665,270, 'goal');
-    
+
 
         //player
         this.noob = new Player(this, 100, 100);
@@ -278,6 +289,10 @@ class level2 extends Phaser.Scene {
         this.owngoal = new Goal(this, 40,270, 'lose');
         this.enemygoal = new Goal(this, 680,270, 'level3');
 
+        //score system
+        this.cards = 0;
+        this.scoreLabel = this.add.text(game.config.width/2, game.config.height/8, `Yellow Cards: ${this.cards}`, {font: "40px Arial", color: "#FFF929"}).setOrigin(0.5);
+
     }
     update() {
         this.noob.update();
@@ -286,6 +301,7 @@ class level2 extends Phaser.Scene {
         this.enemy3.update();
         this.owngoal.update();
         this.enemygoal.update();
+        this.scoreLabel.text = "Yellow Cards:" + this.cards;
     }
 }
 
@@ -306,8 +322,7 @@ class level3 extends Phaser.Scene {
         let background = this.add.image(0,0, 'background').setOrigin(0);
         let owngoal = this.add.image(55,270, 'goal');
         let enemygoal = this.add.image(665,270, 'goal');
-    
-
+        
         //player
         this.noob = new Player(this, 100, 100);
 
@@ -334,6 +349,10 @@ class level3 extends Phaser.Scene {
         this.owngoal = new Goal(this, 40,270, 'lose');
         this.enemygoal = new Goal(this, 680,270, 'win');
 
+        //score system
+        this.cards = 0;
+        this.scoreLabel = this.add.text(game.config.width/2, game.config.height/8, `Yellow Cards: ${this.cards}`, {font: "40px Arial", color: "#FFF929"}).setOrigin(0.5);
+
     }
     update() {
         this.noob.update();
@@ -350,6 +369,7 @@ class level3 extends Phaser.Scene {
         this.enemy11.update();
         this.owngoal.update();
         this.enemygoal.update();
+        this.scoreLabel.text = "Yellow Cards:" + this.cards;
     }
 }
 
@@ -358,7 +378,7 @@ class win extends Phaser.Scene {
         super('win')
     }
     create() {
-        this.add.text(game.config.width/2, game.config.height/3, "You Win!!!", {font: "40px Arial"}).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/3, "You Win!!!", {font: "40px Arial", color: "#FFF929"}).setOrigin(0.5);
         this.add.text(game.config.width/2, game.config.height/2, "You have survived the tournament.", {font: "40px Arial"}).setOrigin(0.5);;
         this.add.text(game.config.width/2, game.config.height/1.25, "Click to restart", {font: "40px Arial"}).setOrigin(0.5);;
 
@@ -440,7 +460,7 @@ const game = new Phaser.Game({
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            debug: false
         }
     },
     scene: [intro, level1, level2, level3,win, lose],
