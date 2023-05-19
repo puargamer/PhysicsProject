@@ -1,4 +1,5 @@
 A realistic soccer simulator
+Play here: https://puargamer.github.io/PhysicsProject/
 
 Experience requirements:
 - **The game uses both continuous and discrete inputs from the player**
