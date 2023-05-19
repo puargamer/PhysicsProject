@@ -99,20 +99,50 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 }
 
 class Ball extends Phaser.Physics.Arcade.Sprite {
-constructor(scene, x, y) {
-    super(scene, x, y, 'ball');
+    constructor(scene, x, y) {
+        super(scene, x, y, 'ball');
 
-    scene.add.existing(this);
-    scene.physics.world.enableBody(this);
+        scene.add.existing(this);
+        scene.physics.world.enableBody(this);
 
-    //this. = this.physics.add.sprite(360, 270, 'ball')
-    this.setCollideWorldBounds(true);
-    this.body.onCollide = true;
-    this.setBounce(.5);
-    this.setCircle(15,10,10);
-    this.setMass(.5);
+        //this. = this.physics.add.sprite(360, 270, 'ball')
+        this.setCollideWorldBounds(true);
+        this.body.onCollide = true;
+        this.setBounce(.5);
+        this.setCircle(15,10,10);
+        this.setMass(.5);
 
 }
+}
+
+//creates goal hitbox
+class Goal extends Phaser.Physics.Arcade.Sprite {
+    constructor(scene, x, y, nextscene) {
+        super(scene, x, y);
+
+        scene.add.existing(this);
+        scene.physics.world.enableBody(this);
+
+        this.body.onCollide = true;
+        this.setSize(16,128);
+
+        this.leftpost = scene.physics.add.sprite(x,y-70)
+        this.leftpost.setSize(76,12)
+        this.leftpost.body.onCollide = true
+        this.leftpost.setPushable(false);
+
+        this.rightpost = scene.physics.add.sprite(x,y+70)
+        this.rightpost.setSize(76,12)
+        this.rightpost.body.onCollide = true
+        this.rightpost.setPushable(false);
+        
+    }
+    update() {
+        this.scene.physics.collide(this.scene.ball, this.leftpost);
+        this.scene.physics.collide(this.scene.ball, this.rightpost);
+    }
+
+    
 }
 
 //
@@ -143,18 +173,15 @@ class level1 extends Phaser.Scene {
         this.noob = new Player(this, 100, 100);
         //this.noob = this.physics.add.sprite(100, 100, 'player')
 
-        this.enemy = new Enemy(this, 300,300);
+        //enemies
+        this.enemy = new Enemy(this, 500,300);
 
         //ball
         this.ball = new Ball(this, 360, 270);
-        /*
-        this.ball = this.physics.add.sprite(360, 270, 'ball')
-        this.ball.setCollideWorldBounds(true);
-        this.ball.body.onCollide = true;
-        this.ball.setBounce(.5);
-        this.ball.setCircle(15,10,10);
-        this.ball.setMass(.5);
-        */
+
+        //goals
+        this.owngoal = new Goal(this, 40,270);
+        this.enemygoal = new Goal(this, 680,270);
 
         //collision event
         //(sets random ball velocities on collison)
@@ -166,6 +193,13 @@ class level1 extends Phaser.Scene {
             }
             else {
             ball.setVelocityX(1000*Math.random());
+            }
+
+            if(ball.y < noob.y) {
+                ball.setVelocityY(-100*Math.random());
+            }
+            else {
+                ball.setVelocityY(100*Math.random());
             }
 
         });
@@ -202,6 +236,14 @@ class level1 extends Phaser.Scene {
 
         this.noob.update();
         this.enemy.update();
+        this.owngoal.update();
+        this.enemygoal.update();
+    }
+}
+
+class level2 extends Phaser.Scene {
+    constructor(){
+        super('level2')
     }
 }
 
@@ -218,6 +260,6 @@ const game = new Phaser.Game({
             debug: true
         }
     },
-    scene: [level1],
+    scene: [level1, level2],
     title: "Physics Game",
 })
