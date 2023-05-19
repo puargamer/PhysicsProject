@@ -8,6 +8,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.world.enableBody(this);
         
+        this.body.onCollide = true;
+        this.setCollideWorldBounds(true);
     }
 }
 
@@ -18,10 +20,21 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.world.enableBody(this);
 
-        
-        this.body.velocity.x = 50;
+        this.body.onCollide = true;
+        this.setCollideWorldBounds(true);
+
+        this.body.setVelocityX(-50);
+
     }
-    
+    update()
+    {
+        if (this.x < 100) {
+            this.body.setVelocityX(50);
+        } 
+        else if (this.x > 500){
+            this.body.setVelocityX(-50);
+        }
+    }
 }
 
 //
@@ -51,13 +64,13 @@ class level1 extends Phaser.Scene {
         //player
         this.noob = new Player(this, 100, 100);
         //this.noob = this.physics.add.sprite(100, 100, 'player')
-        this.noob.setCollideWorldBounds(true);
 
-        let enemy = new Enemy(this, 300,300);
+        this.enemy = new Enemy(this, 300,300);
 
         //ball
         this.ball = this.physics.add.sprite(360, 270, 'ball')
         this.ball.setCollideWorldBounds(true);
+        this.ball.body.onCollide = true;
         this.ball.setBounce(.5);
         this.ball.setCircle(15,10,10);
         this.ball.setMass(.5);
@@ -79,6 +92,8 @@ class level1 extends Phaser.Scene {
 
     }
     update() {
+
+        this.enemy.update();
         //x movement
         
         if(this.cursors.left.isDown) { 
