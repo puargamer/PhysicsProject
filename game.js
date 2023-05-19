@@ -13,7 +13,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         
         this.setPushable(true);
 
-
         //keyboard input
         this.scene.cursors = scene.input.keyboard.createCursorKeys();
 
@@ -74,10 +73,39 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.body.setVelocityY(300);
         //this.setPushable(false);
 
+        //collision event
+        //(enemy pushes player)
+        this.scene.physics.add.collider(this, this.scene.noob, (enemy, noob) =>
+        {
+
+            //if player is in front/behind the enemy's line of sight
+            if (Math.abs(noob.y - enemy.y) < 50) {
+                if (noob.x < enemy.x) {
+                enemy.setVelocityX(-2000*Math.random());
+                }
+                else {
+                enemy.setVelocityX(2000*Math.random());
+                }
+            }
+
+            if (Math.abs(noob.x - enemy.x) < 50) {
+                if (noob.y < enemy.y) {
+                enemy.setVelocityY(-2000*Math.random());
+                }
+                else {
+                enemy.setVelocityY(2000*Math.random());
+                }
+            }
+        });
 
     }
     update()
     {
+        //collide with ball and player
+        this.scene.physics.collide(this, this.scene.ball);
+        this.scene.physics.collide(this, this.scene.noob);
+
+
         //y axis movement
         if (this.y < 50) {
             this.body.setVelocityY(300);
@@ -111,6 +139,25 @@ class Ball extends Phaser.Physics.Arcade.Sprite {
         this.setBounce(.5);
         this.setCircle(15,10,10);
         this.setMass(.5);
+
+        //collision event
+        //(sets random ball velocities on collison)
+        this.scene.physics.add.collider(this, this.scene.noob, (ball, player) =>
+            {
+                if (ball.x < player.x) {
+                ball.setVelocityX(-1000*Math.random());
+                }
+                else {
+                ball.setVelocityX(1000*Math.random());
+                }
+
+                if(ball.y < player.y) {
+                    ball.setVelocityY(-100*Math.random());
+                }
+                else {
+                    ball.setVelocityY(100*Math.random());
+                }
+            })
 
 }
 }
@@ -166,9 +213,7 @@ class level1 extends Phaser.Scene {
         this.load.image('goal', './assets/goal.png');
     }
     create() {
-        //keyboard input
-        this.cursors = this.input.keyboard.createCursorKeys();
-
+        this.cameras.main.fadeIn(1000);
         //assets
         let background = this.add.image(0,0, 'background').setOrigin(0);
         let owngoal = this.add.image(55,270, 'goal');
@@ -177,7 +222,6 @@ class level1 extends Phaser.Scene {
 
         //player
         this.noob = new Player(this, 100, 100);
-        //this.noob = this.physics.add.sprite(100, 100, 'player')
 
         //enemies
         this.enemy = new Enemy(this, 500,300);
@@ -186,59 +230,12 @@ class level1 extends Phaser.Scene {
         this.ball = new Ball(this, 360, 270);
 
         //goals
-        this.owngoal = new Goal(this, 40,270, 'level1');
-        this.enemygoal = new Goal(this, 680,270, 'level1');
+        this.owngoal = new Goal(this, 40,270, 'lose');
+        this.enemygoal = new Goal(this, 680,270, 'level2');
 
-        //collision event
-        //(sets random ball velocities on collison)
-        this.physics.add.collider(this.ball, this.noob, (ball, noob) =>
-        {
-
-            if (ball.x < noob.x) {
-            ball.setVelocityX(-1000*Math.random());
-            }
-            else {
-            ball.setVelocityX(1000*Math.random());
-            }
-
-            if(ball.y < noob.y) {
-                ball.setVelocityY(-100*Math.random());
-            }
-            else {
-                ball.setVelocityY(100*Math.random());
-            }
-
-        });
-
-        //collision event
-        //(enemy pushes player)
-        this.physics.add.collider(this.enemy, this.noob, (enemy, noob) =>
-        {
-
-            //if player is in front/behind the enemy's line of sight
-            if (Math.abs(noob.y - enemy.y) < 50) {
-                if (noob.x < enemy.x) {
-                enemy.setVelocityX(-2000*Math.random());
-                }
-                else {
-                enemy.setVelocityX(2000*Math.random());
-                }
-            }
-
-            if (Math.abs(noob.x - enemy.x) < 50) {
-                if (noob.y < enemy.y) {
-                enemy.setVelocityY(-2000*Math.random());
-                }
-                else {
-                enemy.setVelocityY(2000*Math.random());
-                }
-            }
-        });
-
+    
     }
     update() {
-        this.physics.collide(this.ball, this.enemy);
-        this.physics.collide(this.noob, this.enemy);
 
         this.noob.update();
         this.enemy.update();
@@ -250,6 +247,186 @@ class level1 extends Phaser.Scene {
 class level2 extends Phaser.Scene {
     constructor(){
         super('level2')
+    }
+    preload() {
+        this.load.image('background', './assets/field.png');
+        this.load.image('player', './assets/player.png');
+        this.load.image('enemy', './assets/enemy.png');
+        this.load.image('ball', './assets/ball.png');
+        this.load.image('goal', './assets/goal.png');
+    }
+    create() {
+        this.cameras.main.fadeIn(1000);
+        //assets
+        let background = this.add.image(0,0, 'background').setOrigin(0);
+        let owngoal = this.add.image(55,270, 'goal');
+        let enemygoal = this.add.image(665,270, 'goal');
+    
+
+        //player
+        this.noob = new Player(this, 100, 100);
+
+        //enemies
+        this.enemy = new Enemy(this, 500,125);
+        this.enemy2 = new Enemy(this, 500,425);
+        this.enemy3 = new Enemy(this, 600,275);
+
+        //ball
+        this.ball = new Ball(this, 360, 270);
+
+        //goals
+        this.owngoal = new Goal(this, 40,270, 'lose');
+        this.enemygoal = new Goal(this, 680,270, 'level3');
+
+    }
+    update() {
+        this.noob.update();
+        this.enemy.update();
+        this.enemy2.update();
+        this.enemy3.update();
+        this.owngoal.update();
+        this.enemygoal.update();
+    }
+}
+
+class level3 extends Phaser.Scene {
+    constructor(){
+        super('level3')
+    }
+    preload() {
+        this.load.image('background', './assets/field.png');
+        this.load.image('player', './assets/player.png');
+        this.load.image('enemy', './assets/enemy.png');
+        this.load.image('ball', './assets/ball.png');
+        this.load.image('goal', './assets/goal.png');
+    }
+    create() {
+        this.cameras.main.fadeIn(1000);
+        //assets
+        let background = this.add.image(0,0, 'background').setOrigin(0);
+        let owngoal = this.add.image(55,270, 'goal');
+        let enemygoal = this.add.image(665,270, 'goal');
+    
+
+        //player
+        this.noob = new Player(this, 100, 100);
+
+        //enemies
+        this.enemy = new Enemy(this, 500,200);
+        this.enemy2 = new Enemy(this, 500,350);
+        this.enemy3 = new Enemy(this, 600,275);
+
+        this.enemy4 = new Enemy(this, 550,275);
+        this.enemy5 = new Enemy(this, 550,125);
+        this.enemy6 = new Enemy(this, 550,425);
+
+        this.enemy7 = new Enemy(this, 450,200);
+        this.enemy8 = new Enemy(this, 450,350);
+        this.enemy9 = new Enemy(this, 450,100);
+        this.enemy10 = new Enemy(this, 450,450);
+        this.enemy11 = new Enemy(this, 400,275);
+
+
+        //ball
+        this.ball = new Ball(this, 360, 270);
+
+        //goals
+        this.owngoal = new Goal(this, 40,270, 'lose');
+        this.enemygoal = new Goal(this, 680,270, 'win');
+
+    }
+    update() {
+        this.noob.update();
+        this.enemy.update();
+        this.enemy2.update();
+        this.enemy3.update();
+        this.enemy4.update();
+        this.enemy5.update();
+        this.enemy6.update();
+        this.enemy7.update();
+        this.enemy8.update();
+        this.enemy9.update();
+        this.enemy10.update();
+        this.enemy11.update();
+        this.owngoal.update();
+        this.enemygoal.update();
+    }
+}
+
+class win extends Phaser.Scene {
+    constructor(){
+        super('win')
+    }
+    create() {
+        this.add.text(game.config.width/2, game.config.height/3, "You Win!!!", {font: "40px Arial"}).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2, "You have survived the tournament.", {font: "40px Arial"}).setOrigin(0.5);;
+        this.add.text(game.config.width/2, game.config.height/1.25, "Click to restart", {font: "40px Arial"}).setOrigin(0.5);;
+
+
+        let fx = this.cameras.main.postFX.addWipe();
+        this.input.once('pointerdown', () => {  
+            //transition
+            this.scene.transition({
+                target: 'level1',
+                duration: 500,
+                moveBelow: true,
+                onUpdate: (progress) => {
+                    fx.progress = progress;
+                }
+            });
+        })
+        
+    }
+}
+
+class lose extends Phaser.Scene {
+    constructor(){
+        super('lose')
+    }
+    create() {
+        this.add.text(game.config.width/2, game.config.height/3, "You lose!", {font: "40px Arial"}).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2, "Click to restart", {font: "40px Arial"}).setOrigin(0.5);;
+
+
+        let fx = this.cameras.main.postFX.addWipe();
+        this.input.once('pointerdown', () => {  
+            //transition
+            this.scene.transition({
+                target: 'level1',
+                duration: 500,
+                moveBelow: true,
+                onUpdate: (progress) => {
+                    fx.progress = progress;
+                }
+            });
+        })
+        
+    }
+}
+
+class intro extends Phaser.Scene {
+    constructor(){
+        super('intro')
+    }
+    create() {
+        this.add.text(game.config.width/2, game.config.height/3, "Can you beat the tournament?", {font: "20px Arial"}).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2, "Use arrow keys to move", {font: "40px Arial"}).setOrigin(0.5);;
+        this.add.text(game.config.width/2, game.config.height/1.25, "Click to start", {font: "40px Arial"}).setOrigin(0.5);;
+
+
+        let fx = this.cameras.main.postFX.addWipe();
+        this.input.once('pointerdown', () => {  
+            //transition
+            this.scene.transition({
+                target: 'level1',
+                duration: 500,
+                moveBelow: true,
+                onUpdate: (progress) => {
+                    fx.progress = progress;
+                }
+            });
+        })
+        
     }
 }
 
@@ -266,6 +443,6 @@ const game = new Phaser.Game({
             debug: true
         }
     },
-    scene: [level1, level2],
+    scene: [intro, level1, level2, level3,win, lose],
     title: "Physics Game",
 })
