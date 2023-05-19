@@ -10,6 +10,49 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         
         this.body.onCollide = true;
         this.setCollideWorldBounds(true);
+
+        this.scene.cursors = scene.input.keyboard.createCursorKeys();
+
+    }
+    update()
+    {
+        //x movement
+        if(this.scene.cursors.left.isDown) { 
+            this.angle = 180;
+            this.setVelocityX(-200);
+        }
+        else if (this.scene.cursors.right.isDown) {
+            this.angle = 0;
+            this.setVelocityX(200);
+        }
+        else{
+            this.setVelocityX(0);
+        }
+
+        //y movement
+        if(this.scene.cursors.up.isDown) {
+            this.angle = -90;
+            this.setVelocityY(-200);
+
+            //angles character for diagonal movement
+            if (this.scene.cursors.right.isDown) {
+                this.angle = 315}
+            else if (this.scene.cursors.left.isDown) {
+                this.angle = 225}
+        }
+        else if (this.scene.cursors.down.isDown) {
+            this.angle = 90;
+            this.setVelocityY(200);
+
+            //angles character for diagonal movement
+            if (this.scene.cursors.right.isDown) {
+                this.angle = 45}
+            else if (this.scene.cursors.left.isDown) {
+                this.angle = 135}
+        }
+        else{
+            this.setVelocityY(0);
+        }
     }
 }
 
@@ -24,6 +67,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
 
         this.body.setVelocityX(-50);
+        //this.setPushable(false);
 
     }
     update()
@@ -92,48 +136,11 @@ class level1 extends Phaser.Scene {
 
     }
     update() {
+        this.physics.collide(this.ball, this.enemy);
+        this.physics.collide(this.noob, this.enemy);
 
+        this.noob.update();
         this.enemy.update();
-        //x movement
-        
-        if(this.cursors.left.isDown) { 
-
-            this.noob.angle = 180;
-            this.noob.setVelocityX(-200);
-
-        }
-        else if (this.cursors.right.isDown) {
-            this.noob.angle = 0;
-            this.noob.setVelocityX(200);
-        }
-        else{
-            this.noob.setVelocityX(0);
-        }
-
-        //y movement
-        if(this.cursors.up.isDown) {
-            this.noob.angle = -90;
-            this.noob.setVelocityY(-200);
-
-            //angles character for diagonal movement
-            if (this.cursors.right.isDown) {
-                this.noob.angle = 315}
-            else if (this.cursors.left.isDown) {
-                this.noob.angle = 225}
-        }
-        else if (this.cursors.down.isDown) {
-            this.noob.angle = 90;
-            this.noob.setVelocityY(200);
-
-            //angles character for diagonal movement
-            if (this.cursors.right.isDown) {
-                this.noob.angle = 45}
-            else if (this.cursors.left.isDown) {
-                this.noob.angle = 135}
-        }
-        else{
-            this.noob.setVelocityY(0);
-        }
     }
 }
 
