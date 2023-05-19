@@ -10,7 +10,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         
         this.body.onCollide = true;
         this.setCollideWorldBounds(true);
+        
+        this.setPushable(true);
 
+
+        //keyboard input
         this.scene.cursors = scene.input.keyboard.createCursorKeys();
 
     }
@@ -63,21 +67,34 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.world.enableBody(this);
 
+        this.angle = 180;
         this.body.onCollide = true;
         this.setCollideWorldBounds(true);
 
-        this.body.setVelocityX(-50);
+        this.body.setVelocityY(300);
         //this.setPushable(false);
+
 
     }
     update()
     {
-        if (this.x < 100) {
-            this.body.setVelocityX(50);
+        //y axis movement
+        if (this.y < 50) {
+            this.body.setVelocityY(300);
         } 
-        else if (this.x > 500){
-            this.body.setVelocityX(-50);
+        else if (this.y > 500){
+            this.body.setVelocityY(-300);
         }
+
+        //x axis movement
+        if (this.x > 500) {
+            this.body.setVelocityX(-100);
+        } 
+        
+        if (this.x < 100) {
+            this.body.setVelocityX(300);
+        }
+    
     }
 }
 
@@ -130,6 +147,23 @@ class level1 extends Phaser.Scene {
             }
             else {
             ball.setVelocityX(1000*Math.random());
+            }
+
+        });
+
+        //collision event
+        //(enemy pushes player)
+        this.physics.add.collider(this.enemy, this.noob, (enemy, noob) =>
+        {
+
+            //if player is in front/behind the enemy's line of sight
+            if (Math.abs(noob.y - enemy.y) < 50) {
+                if (noob.x < enemy.x) {
+                enemy.setVelocityX(-2000*Math.random());
+                }
+                else {
+                enemy.setVelocityX(2000*Math.random());
+                }
             }
 
         });
