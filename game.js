@@ -150,19 +150,25 @@ class Ball extends Phaser.Physics.Arcade.Sprite {
         //(sets random ball velocities on collison)
         this.scene.physics.add.collider(this, this.scene.noob, (ball, player) =>
             {
-                if (ball.x < player.x) {
-                ball.setVelocityX(-1000*Math.random());
-                }
-                else {
-                ball.setVelocityX(1000*Math.random());
+                if (Math.abs(ball.x-player.x) < Math.abs(ball.y-player.y)) {
+                    if (ball.x < player.x) {
+                    ball.setVelocityX(-1000*Math.random());
+                    }
+                    else {
+                    ball.setVelocityX(1000*Math.random());
+                    }
+                
                 }
 
+                if (Math.abs(ball.x-player.x) > Math.abs(ball.y-player.y)) {
                 if(ball.y < player.y) {
                     ball.setVelocityY(-100*Math.random());
                 }
                 else {
                     ball.setVelocityY(100*Math.random());
                 }
+                }
+
             })
 
 }

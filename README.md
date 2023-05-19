@@ -1,4 +1,4 @@
-A simple adventure game by Ivan Kwok based on a simple adventure game engine by [Adam Smith](https://github.com/rndmcnlly).
+A realistic soccer simulator
 
 Experience requirements:
 - **The game uses both continuous and discrete inputs from the player**
