@@ -87,8 +87,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
 
         //x axis movement
-        if (this.x > 500) {
-            this.body.setVelocityX(-100);
+        if (this.x > 600) {
+            this.body.setVelocityX(-300);
         } 
         
         if (this.x < 100) {
@@ -96,6 +96,23 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
     
     }
+}
+
+class Ball extends Phaser.Physics.Arcade.Sprite {
+constructor(scene, x, y) {
+    super(scene, x, y, 'ball');
+
+    scene.add.existing(this);
+    scene.physics.world.enableBody(this);
+
+    //this. = this.physics.add.sprite(360, 270, 'ball')
+    this.setCollideWorldBounds(true);
+    this.body.onCollide = true;
+    this.setBounce(.5);
+    this.setCircle(15,10,10);
+    this.setMass(.5);
+
+}
 }
 
 //
@@ -129,13 +146,15 @@ class level1 extends Phaser.Scene {
         this.enemy = new Enemy(this, 300,300);
 
         //ball
+        this.ball = new Ball(this, 360, 270);
+        /*
         this.ball = this.physics.add.sprite(360, 270, 'ball')
         this.ball.setCollideWorldBounds(true);
         this.ball.body.onCollide = true;
         this.ball.setBounce(.5);
         this.ball.setCircle(15,10,10);
         this.ball.setMass(.5);
-        this.ball.body.allowRotation = true; 
+        */
 
         //collision event
         //(sets random ball velocities on collison)
@@ -166,6 +185,14 @@ class level1 extends Phaser.Scene {
                 }
             }
 
+            if (Math.abs(noob.x - enemy.x) < 50) {
+                if (noob.y < enemy.y) {
+                enemy.setVelocityY(-2000*Math.random());
+                }
+                else {
+                enemy.setVelocityY(2000*Math.random());
+                }
+            }
         });
 
     }
