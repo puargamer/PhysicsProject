@@ -238,7 +238,7 @@ class level1 extends Phaser.Scene {
 
         //goals
         this.owngoal = new Goal(this, 40,270, 'lose');
-        this.enemygoal = new Goal(this, 680,270, 'level2');
+        this.enemygoal = new Goal(this, 680,270, 'load1');
 
         //score system
         this.cards = 0;
@@ -287,7 +287,7 @@ class level2 extends Phaser.Scene {
 
         //goals
         this.owngoal = new Goal(this, 40,270, 'lose');
-        this.enemygoal = new Goal(this, 680,270, 'level3');
+        this.enemygoal = new Goal(this, 680,270, 'load2');
 
         //score system
         this.cards = 0;
@@ -450,6 +450,54 @@ class intro extends Phaser.Scene {
     }
 }
 
+class load1 extends Phaser.Scene {
+    constructor(){
+        super('load1')
+    }
+    create() {
+        this.add.text(game.config.width/2, game.config.height/3, "You lived!", {font: "20px Arial"}).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2, "Now beat a team of 3!", {font: "40px Arial"}).setOrigin(0.5);;
+        this.add.text(game.config.width/2, game.config.height/1.25, "Click to start", {font: "40px Arial"}).setOrigin(0.5);;
+
+        let fx = this.cameras.main.postFX.addWipe();
+        this.input.once('pointerdown', () => {  
+            //transition
+            this.scene.transition({
+                target: 'level2',
+                duration: 500,
+                moveBelow: true,
+                onUpdate: (progress) => {
+                    fx.progress = progress;
+                }
+            });
+        })
+    }
+}
+
+class load2 extends Phaser.Scene {
+    constructor(){
+        super('load2')
+    }
+    create() {
+        this.add.text(game.config.width/2, game.config.height/3, "You're learning", {font: "20px Arial"}).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2, "Now beat Manchester City!", {font: "40px Arial"}).setOrigin(0.5);;
+        this.add.text(game.config.width/2, game.config.height/1.25, "Click to start", {font: "40px Arial"}).setOrigin(0.5);;
+
+        let fx = this.cameras.main.postFX.addWipe();
+        this.input.once('pointerdown', () => {  
+            //transition
+            this.scene.transition({
+                target: 'level3',
+                duration: 500,
+                moveBelow: true,
+                onUpdate: (progress) => {
+                    fx.progress = progress;
+                }
+            });
+        })
+    }
+}
+
 const game = new Phaser.Game({
     scale: {
         //mode: Phaser.Scale.FIT,
@@ -463,6 +511,6 @@ const game = new Phaser.Game({
             debug: false
         }
     },
-    scene: [intro, level1, level2, level3,win, lose],
+    scene: [intro, level1, level2, level3,win, lose, load1, load2],
     title: "Physics Game",
 })
